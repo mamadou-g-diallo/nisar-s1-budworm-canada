@@ -86,7 +86,9 @@ its own:
 </p>
 
 A Random Forest classifier trained on 6 simple radar descriptors reaches 38% cross-validated accuracy
-on the 4-class problem (chance ≈ 25–30% given class imbalance) — a real but modest signal, consistent
+on the 4-class problem. Accuracy alone is misleading here: the *light* class holds 57% of the samples,
+so always predicting it would score 57% (a class-proportional random guess scores ≈ 44%). The honest
+measure is the per-class F1 — 0.55 (light), 0.27 (moderate), 0.10 (severe) — a weak signal, consistent
 with the literature and with the expectation that **severity grading requires more than a linear radar
 index** (see [Results & discussion](#results--discussion)).
 
@@ -246,6 +248,8 @@ To run this on a different region: drop a new AOI polygon shapefile in `data/shp
 | Years | 2017, 2019, 2021, 2023, 2025 |
 | Valid zonal samples | 1,329 (753 light / 448 moderate / 91 severe / 37 non-affected) |
 | Random Forest accuracy (5-fold CV, 4 classes) | 38% |
+| Majority-class baseline (always "light") | 57% (proportional random guess ≈ 44%) |
+| F1 per class — light / moderate / severe | 0.55 / 0.27 / 0.10 |
 | Most contributive descriptor (SHAP) | `rvi_std` (intra-polygon RVI variability) |
 
 The RVI cleanly separates non-affected stands (tight distribution around 0.80) from any level of TBE
@@ -366,7 +370,8 @@ the same 64×64 px (1.28 km) patch centered on each polygon centroid.
   <img src="results/saguenay_lsj/os4_ssl4eo_vs_amplitude.png" width="560">
 </p>
 
-This is not a majority-class trick: the gain concentrates exactly where amplitude was weakest —
+The 64.0% accuracy is only modestly above the ≈ 57% majority-class baseline, so the per-class F1 is
+the figure to read. This is not a majority-class trick: the gain concentrates exactly where amplitude was weakest —
 distinguishing *moderate* from *severe* damage, not just detecting that something is wrong. The one
 class that stays hard, non-affected controls (n≈24, unfiltered by ecoforest type), is hard for both
 methods alike, which is reassuring rather than suspicious.
@@ -449,6 +454,13 @@ for planning where new coring would be most informative.
 - Sentinel-1 coverage of the chosen AOI is partial (~43–46%): the retained orbit's swath doesn't cover
   the full bounding box.
 - Incidence angle varies along-swath within a single orbit (not corrected here).
+- GRD border noise: 7.8% of the valid composite pixels fall below −30 dB within 0.8–1.4 km of the swath
+  edge. Masking a 2 km border (test run with `nisar_s1` 0.5.0, 2026-11-26) leaves 1,060 samples and
+  gives 41% accuracy and F1 0.58 / 0.28 / 0.12 (light / moderate / severe), against 38% and
+  0.55 / 0.27 / 0.10 without the mask: the conclusions are unchanged, and the ≈ 2.5–3 dB VV gap
+  between controls and defoliated stands persists (the spatial confound described under OS2).
+- Accuracy is reported against a 57% majority-class baseline; per-class F1 is the more informative
+  measure given the class imbalance.
 
 These are accepted trade-offs for a data-open proof-of-concept, not fundamental barriers — each has a
 concrete fix identified for the next phase (see below).
@@ -461,7 +473,8 @@ This is OS1 (Objectif Spécifique 1) of a four-part doctoral research plan:
 - **OS2** — four tests run so far (this repo): a single-angle Water Cloud Model, a per-pixel
   temporal-anomaly correction standing in for the missing incidence-angle band, GLCM texture, and a
   matched amplitude-vs-texture-vs-combined comparison. None of amplitude, texture, or their combination
-  clears ~40% accuracy on open data alone — the ceiling isn't a missing descriptor, it's the missing
+  clears ~40% accuracy on open data alone (below the 57% majority-class baseline; F1 ≤ 0.28 for
+  moderate and severe) — the ceiling isn't a missing descriptor, it's the missing
   physical/field layer. Next: couple a Water Cloud Model to field-measured tree water potential/sap
   flow via a dielectric mixing model, and add InSAR coherence once SLC pairs are worth acquiring — the
   shared package computes it with ESA SNAP (`nisar_s1.snap`); acquiring authenticated SLC data for this
