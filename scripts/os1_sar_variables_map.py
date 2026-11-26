@@ -1,5 +1,5 @@
 """
-OS1 — carte des trois descripteurs radar (VV_dB, VH_dB, RVI) côte à côte sur
+Étape 1 — carte des trois descripteurs radar (VV_dB, VH_dB, RVI) côte à côte sur
 l'AOI, pour une année donnée. Complète severity_map_2025.png (qui montre le
 VV seul en fond) en donnant une vraie carte de chaque variable utilisée dans
 les analyses.

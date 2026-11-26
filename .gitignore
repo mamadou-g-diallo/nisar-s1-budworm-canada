@@ -16,7 +16,7 @@ __pycache__/
 # Ancienne chaîne SNAP locale (remplacée par nisar_s1.snap) et notebooks personnels
 insar_coherence_snap/
 
-# Docs de travail (PDF/DOCX générés localement pour la candidature, hors dépôt)
+# Docs de travail (PDF/DOCX générés localement, hors dépôt)
 *.docx
 *.pdf
 *.tex

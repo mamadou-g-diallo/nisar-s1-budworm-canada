@@ -1,8 +1,8 @@
-# SAR-TBE-Defoliation
+# Sentinel-1 and spruce budworm defoliation in Quebec
 
 **Does Sentinel-1 radar backscatter carry a usable signal of spruce budworm defoliation severity in the Canadian boreal forest?**
 
-A reproducible, open-data-only pipeline that links Sentinel-1 SAR time series to the Quebec government's own aerial-survey defoliation maps, built as a proof-of-concept for a PhD research objective on SAR-based forest health monitoring.
+A reproducible, open-data-only pipeline that links Sentinel-1 SAR time series to the Quebec government's own aerial-survey defoliation maps, testing how far SAR alone can grade spruce budworm defoliation severity, and what it would take to go further.
 
 ![Python](https://img.shields.io/badge/python-3.11-blue)
 ![License](https://img.shields.io/badge/code%20license-Apache--2.0-blue)
@@ -25,9 +25,9 @@ A reproducible, open-data-only pipeline that links Sentinel-1 SAR time series to
 - [Repository structure](#repository-structure)
 - [Getting started](#getting-started)
 - [Results & discussion](#results--discussion)
-- [OS2 — first physical-model test](#os2--first-physical-model-test-negative-result-and-why-it-matters)
-- [OS4 preview — a pre-trained SAR foundation model](#os4-preview--a-pre-trained-sar-foundation-model-changes-the-picture)
-- [OS3 — dendrochronology](#os3--dendrochronology-what-open-data-can-and-cant-do)
+- [Step 2 — first physical-model test](#step-2--first-physical-model-test-negative-result-and-why-it-matters)
+- [Step 4 — a pre-trained SAR foundation model](#step-4--a-pre-trained-sar-foundation-model-changes-the-picture)
+- [Step 3 — dendrochronology](#step-3--dendrochronology-what-open-data-can-and-cant-do)
 - [Limitations](#limitations)
 - [Illustrative aside — PINNs](#illustrative-aside--physics-informed-neural-networks-synthetic-data-not-an-aoi-result)
 - [Roadmap](#roadmap)
@@ -92,9 +92,9 @@ measure is the per-class F1 — 0.55 (light), 0.27 (moderate), 0.10 (severe) —
 with the literature and with the expectation that **severity grading requires more than a linear radar
 index** (see [Results & discussion](#results--discussion)).
 
-*Caveat, established by the OS2 follow-up test below: part of this RVI separation appears to be a
+*Caveat, established by the step 2 follow-up test below: part of this RVI separation appears to be a
 spatial confound rather than a purely temporal defoliation response — see
-[OS2 — first physical-model test](#os2--first-physical-model-test-negative-result-and-why-it-matters).*
+[Step 2 — first physical-model test](#step-2--first-physical-model-test-negative-result-and-why-it-matters).*
 
 ## Architecture
 
@@ -276,10 +276,10 @@ defoliation, canopy gaps) carries information that a single average value discar
 airborne LiDAR structural metrics (canopy height variance, gap fraction) could test directly in the
 next phase of this project.
 
-## OS2 — first physical-model test (negative result, and why it matters)
+## Step 2 — first physical-model test (negative result, and why it matters)
 
-As a first, deliberately quick test of OS2, [`os2_water_cloud_model.py`](scripts/os2_water_cloud_model.py)
-fits a single-angle Water Cloud Model (Attema & Ulaby, 1978) to the same OS1 samples, estimating one
+As a first, deliberately quick test of step 2, [`os2_water_cloud_model.py`](scripts/os2_water_cloud_model.py)
+fits a single-angle Water Cloud Model (Attema & Ulaby, 1978) to the same step 1 samples, estimating one
 effective vegetation descriptor `V` per severity class jointly with shared coefficients `A`, `B`,
 `σ0_soil` per polarization, by nonlinear least squares.
 
@@ -289,7 +289,7 @@ just the WCM fit) — the raw single-polarization backscatter carries essentiall
 signal once averaged per polygon; the within-class standard deviation (3–9 dB) dwarfs any between-class
 difference (<1 dB). This is not an optimizer failure; it holds for the *best achievable* discrete model.
 
-This sharpens, rather than contradicts, the OS1 finding: the RVI's non-affected/affected separation
+This sharpens, rather than contradicts, the step 1 finding: the RVI's non-affected/affected separation
 comes specifically from the **VH/VV ratio**, which cancels common-mode nuisance variance (local
 incidence angle, general moisture, calibration) that dominates each raw band on its own across a
 ~2,000 km² AOI.
@@ -313,12 +313,12 @@ confirming that incidence-angle/static-terrain effects (not defoliation) were th
 raw variance. But the class-mean ceiling stays essentially at zero either way, and RF accuracy only
 inches up (+3 points). Tellingly, RVI — already a *ratio*, so partly self-normalizing against the very
 effects the anomaly correction targets — loses almost all of its (modest) raw R² once that correction
-is applied. Read together, this suggests the OS1 RVI separation was **partly a spatial-confound
+is applied. Read together, this suggests the step 1 RVI separation was **partly a spatial-confound
 artifact** (non-affected controls and TBE polygons don't just differ by defoliation, they also differ
-by location) rather than a purely temporal defoliation response — an important caveat on the OS1 result
-above, not just a footnote on OS2.
+by location) rather than a purely temporal defoliation response — an important caveat on the step 1 result
+above, not just a footnote on step 2.
 
-The practical implication for OS2 is now more specific than "correct for incidence angle": amplitude-
+The practical implication for step 2 is now more specific than "correct for incidence angle": amplitude-
 only descriptors (single or dual-pol backscatter level) appear to carry very little severity
 information at this resolution and compositing scheme, corrected or not. The physically-motivated path
 already planned — coupling a Water Cloud Model to field-measured canopy water content/hydraulics,
@@ -358,12 +358,12 @@ artifact of the smaller, larger-polygon-biased sample texture requires, not of t
 informative. This is the kind of correction that matters more than either result on its own: **check
 that two numbers you're comparing were computed on the same data before trusting the gap between them.**
 
-## OS4 preview — a pre-trained SAR foundation model changes the picture
+## Step 4 — a pre-trained SAR foundation model changes the picture
 
 Every hand-crafted descriptor tried above (amplitude, incidence-angle-corrected amplitude, GLCM
 texture, and their combination) tops out around 38–41% accuracy. Before concluding that ~40% is a hard
 ceiling for open Sentinel-1 data on this problem, [`os4_foundation_model_probe.py`](scripts/os4_foundation_model_probe.py)
-tests one more thing, pulled forward from the OS4 roadmap item: **linear probing** on
+tests one more thing: **linear probing** on
 [SSL4EO-S12](https://arxiv.org/abs/2211.07044) — a ResNet50 pre-trained by self-supervised contrastive
 learning (MoCo) on global Sentinel-1 VV/VH, via [TorchGeo](https://torchgeo.readthedocs.io/). The
 backbone stays frozen (no fine-tuning); only a Random Forest is trained on its 2048-d embeddings, for
@@ -386,7 +386,7 @@ distinguishing *moderate* from *severe* damage, not just detecting that somethin
 class that stays hard, non-affected controls (n≈24, unfiltered by ecoforest type), is hard for both
 methods alike, which is reassuring rather than suspicious.
 
-**Why trust this more than the earlier RVI false lead.** The OS2 anomaly test caught the RVI result
+**Why trust this more than the earlier RVI false lead.** The step 2 anomaly test caught the RVI result
 being partly a spatial confound because it only separated *affected vs. non-affected* — exactly the
 split a location/land-cover artifact would produce. Here the improvement is *within* defoliated forest,
 grading léger → modéré → grave, which a simple "this looks like a different place" shortcut can't
@@ -397,8 +397,7 @@ don't.
 
 **What this doesn't settle**: the patch size wasn't matched to polygon size the way the
 amplitude/texture comparison was, and a single train/test protocol (5-fold CV, same as everywhere else
-in this repo) isn't a substitute for a held-out spatial block or year. But as a first look pulled
-forward from OS4, it's the strongest result in this repository, and it reframes OS2/OS3's field-data
+in this repo) isn't a substitute for a held-out spatial block or year. But as a first look, it's the strongest result in this repository, and it reframes the field-data
 conclusion: physical modeling and field hydraulics remain the right long-term direction, but
 representation learning on raw SAR appears to already recover signal that hand-crafted descriptors
 were leaving on the table.
@@ -420,10 +419,10 @@ the simpler approach, and the two numbers aren't even on a fully comparable foot
 vs. cross-validated). At this sample size, treating the pre-trained embeddings as fixed and training
 only a lightweight classifier on top is not just cheaper — it appears to be the better choice.
 Fine-tuning would likely need substantially more labeled samples (or heavier regularization / a
-smaller unfrozen block) to pay off, which is worth keeping in mind for OS4 once new field data grows
+smaller unfrozen block) to pay off, which is worth keeping in mind once new field data grow
 the training set.
 
-## OS3 — dendrochronology: what open data can and can't do
+## Step 3 — dendrochronology: what open data can and can't do
 
 [`os3_dendro_check.py`](scripts/os3_dendro_check.py) pulls the three nearest published tree-ring chronologies
 (NOAA/[ITRDB](https://www.ncei.noaa.gov/products/paleoclimatology/tree-ring), Krause & Morin) to the
@@ -437,8 +436,8 @@ AOI — one (Lac Onatchiway, black spruce) falls *inside* the Sentinel-1 boundin
 
 **The hard limit, stated plainly**: all three end in **1993–1995**, roughly two decades before Sentinel-1
 existed (2014+). Open dendro data cannot directly validate the SAR-derived index from this repo — that
-requires new field coring co-located with current SAR observations, which is exactly what OS3 is
-scoped to do in the full research plan.
+requires new field coring co-located with current SAR observations, which is the natural next
+step for this line of work.
 
 What these chronologies *can* do, and do well: corroborate that they capture a real, known regional
 signal, which is a meaningful check on data quality before investing in new fieldwork guided by the
@@ -468,7 +467,7 @@ for planning where new coring would be most informative.
   edge. Masking a 2 km border (test run with `nisar_s1` 0.5.0, 2026-11-26) leaves 1,060 samples and
   gives 41% accuracy and F1 0.58 / 0.28 / 0.12 (light / moderate / severe), against 38% and
   0.55 / 0.27 / 0.10 without the mask: the conclusions are unchanged, and the ≈ 2.5–3 dB VV gap
-  between controls and defoliated stands persists (the spatial confound described under OS2).
+  between controls and defoliated stands persists (the spatial confound described under step 2).
 - Accuracy is reported against a 57% majority-class baseline; per-class F1 is the more informative
   measure given the class imbalance.
 
@@ -477,10 +476,10 @@ concrete fix identified for the next phase (see below).
 
 ## Roadmap
 
-This is OS1 (Objectif Spécifique 1) of a four-part doctoral research plan:
+The work is organised in four steps (the scripts are prefixed `os1_` to `os4_` accordingly):
 
-- **OS1 (this repo)** — characterize the SAR signal against defoliation severity.
-- **OS2** — four tests run so far (this repo): a single-angle Water Cloud Model, a per-pixel
+- **Step 1, SAR signal** — characterize the SAR signal against defoliation severity.
+- **Step 2, physical modelling** — four tests run so far: a single-angle Water Cloud Model, a per-pixel
   temporal-anomaly correction standing in for the missing incidence-angle band, GLCM texture, and a
   matched amplitude-vs-texture-vs-combined comparison. None of amplitude, texture, or their combination
   clears ~40% accuracy on open data alone (below the 57% majority-class baseline; F1 ≤ 0.28 for
@@ -489,12 +488,12 @@ This is OS1 (Objectif Spécifique 1) of a four-part doctoral research plan:
   flow via a dielectric mixing model, and add InSAR coherence once SLC pairs are worth acquiring — the
   shared package computes it with ESA SNAP (`nisar_s1.snap`); acquiring authenticated SLC data for this
   AOI is the remaining blocker, not the processing method.
-- **OS3** — a first check (this repo) against the 3 nearest open ITRDB chronologies confirms they
+- **Step 3, field validation** — a first check against the 3 nearest open ITRDB chronologies confirms they
   capture a real, host-specific 1978 growth crash synchronized across independent sites, but all three
   end in 1993–1995 — decades before Sentinel-1 exists. Cross-validating the SAR-derived stress index
   requires new field coring (ring width, blue intensity) co-located with current SAR observations, not
   a reuse of legacy chronologies.
-- **OS4** — linear probing on SSL4EO-S12 embeddings (this repo) already outperforms every hand-crafted
+- **Step 4, learned representations** — linear probing on SSL4EO-S12 embeddings already outperforms every hand-crafted
   descriptor (64.0% vs. 38–41% accuracy, gains concentrated in the léger/modéré/grave grading that
   amplitude and texture couldn't do); partial fine-tuning was tested too and overfits at this sample
   size (59.9%, worse than the frozen probe) — more labeled data would likely be needed before
@@ -503,7 +502,7 @@ This is OS1 (Objectif Spécifique 1) of a four-part doctoral research plan:
 
 ## Illustrative aside — physics-informed neural networks (synthetic data, not an AOI result)
 
-The OS2 roadmap item (couple a Water Cloud Model to field-measured tree hydraulics) is a natural fit
+The step-2 roadmap item (couple a Water Cloud Model to field-measured tree hydraulics) is a natural fit
 for a **physics-informed neural network** (PINN): an encoder that inverts tree water potential (Psi)
 from SAR backscatter, regularized by a differentiable physics decoder rather than relying solely on
 scarce field labels. But testing one on the real AOI right now would show nothing — the WCM test above
@@ -532,7 +531,7 @@ error by ~40% from the same 15 labels. It's not a clean inversion (the scatter i
 toy pressure-volume curve saturates at both ends, which is a genuine identifiability limit of this kind
 of inverse problem, not an artifact of the neural network): the honest takeaway is that physics
 regularization helps when labels are scarce, not that it solves the inversion outright. This is a
-worked illustration for the thesis proposal, not a finding about the Saguenay–Lac-Saint-Jean forest.
+worked illustration of the method, not a finding about the Saguenay–Lac-Saint-Jean forest.
 
 ## License & data attribution
 

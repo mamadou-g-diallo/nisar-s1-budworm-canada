@@ -1,7 +1,7 @@
 """
 Exploration Random Forest + SHAP : quelle contribution du VV, VH et du RVI
 (et de leur variabilité intra-polygone) à la sévérité de défoliation TBE
-observée la même année ? Étape exploratoire de l'OS1 - identifier quels
+observée la même année ? Analyse exploratoire de l'étape 1 - identifier quels
 descripteurs radar portent le signal, avant tout travail de modélisation
 physique (Water Cloud Model / MIMICS) ou d'inversion.
 

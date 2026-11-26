@@ -1,5 +1,5 @@
 """
-OS4 (suite) — fine-tuning partiel du modèle fondation SSL4EO-S12 (au lieu du
+Étape 4 (suite) — fine-tuning partiel du modèle fondation SSL4EO-S12 (au lieu du
 simple "linear probing" de os4_foundation_model_probe.py) : le backbone
 ResNet50 pré-entraîné (MoCo, Sentinel-1 VV/VH) garde ses couches précoces
 gelées (features SAR bas niveau, probablement déjà génériques), mais

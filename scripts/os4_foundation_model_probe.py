@@ -1,7 +1,7 @@
 """
-OS4 (test anticipé) — un modèle fondation pré-entraîné sur Sentinel-1 apporte-
-t-il plus de signal que les descripteurs manuels (amplitude OS1/OS2, texture
-GLCM OS2) ? Test en "linear probing" : le réseau pré-entraîné (SSL4EO-S12,
+Étape 4 (test anticipé) — un modèle fondation pré-entraîné sur Sentinel-1 apporte-
+t-il plus de signal que les descripteurs manuels (amplitude des étapes 1 et 2, texture
+GLCM de l'étape 2) ? Test en "linear probing" : le réseau pré-entraîné (SSL4EO-S12,
 ResNet50, auto-supervision MoCo sur des paires VV/VH mondiales - Wang et al.,
 2022, https://arxiv.org/abs/2211.07044) reste gelé, on extrait juste
 l'embedding (2048-d) de chaque polygone et on entraîne un Random Forest

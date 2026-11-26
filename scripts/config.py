@@ -1,4 +1,4 @@
-"""Paramètres du prototype OS1 - signal SAR vs sévérité de défoliation (TBE),
+"""Paramètres du prototype de l'étape 1 - signal SAR vs sévérité de défoliation (TBE),
 forêt boréale du Québec.
 
 Zone d'étude sélectionnée par la variable d'environnement TBE_AOI (nom d'un

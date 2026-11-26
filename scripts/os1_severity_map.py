@@ -1,5 +1,5 @@
 """
-OS1 — carte de sévérité TBE superposée au composite Sentinel-1 (VV_dB), pour
+Étape 1 — carte de sévérité TBE superposée au composite Sentinel-1 (VV_dB), pour
 voir concrètement où se situent les zones de défoliation dans l'AOI plutôt
 que de s'appuyer uniquement sur des statistiques agrégées (boxplots, SHAP).
 

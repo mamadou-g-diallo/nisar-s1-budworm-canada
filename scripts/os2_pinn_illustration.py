@@ -1,5 +1,5 @@
 """
-OS2 (illustration pédagogique, PAS un résultat sur nos données réelles) —
+Étape 2 (illustration pédagogique, PAS un résultat sur nos données réelles) —
 un réseau de neurones informé par la physique (PINN) pour inverser le
 potentiel hydrique de l'arbre (Psi, MPa) à partir de la rétrodiffusion SAR,
 en s'appuyant sur très peu de mesures de terrain étiquetées.
@@ -12,7 +12,7 @@ librement sur nos données réelles, n'explique presque aucune variance
 pas parce que le modèle ou l'optimiseur sont mauvais. Un PINN ne peut pas
 injecter une information physique absente des données ; il n'a donc rien à
 démontrer sur l'AOI actuel. Ce script illustre plutôt CE QUE l'approche PINN
-apporterait une fois de vraies mesures hydrauliques disponibles (OS2/OS3) :
+apporterait une fois de vraies mesures hydrauliques disponibles (étapes 2 et 3) :
 apprendre à inverser Psi à partir de très peu d'exemples étiquetés, en
 s'appuyant sur un décodeur physique différentiable plutôt que sur la seule
 supervision.
@@ -29,7 +29,7 @@ Protocole :
   1. 500 échantillons synthétiques (Psi tiré uniformément, bruit de mesure
      réaliste ajouté sur sigma0 en dB).
   2. Seuls 15 échantillons "connaissent" Psi (simule une petite campagne de
-     terrain - le genre de volume réaliste pour une première année d'OS3).
+     terrain - le genre de volume réaliste pour une première année de l'étape 3).
   3. Modèle A (baseline) : régression supervisée pure, entraînée sur les 15
      seuls exemples étiquetés.
   4. Modèle B (PINN) : même réseau, mais un décodeur physique différentiable

@@ -1,7 +1,7 @@
 """
-OS2 (suite) — texture GLCM (Haralick) sur VV_dB/VH_dB comme descripteur
+Étape 2 (suite) — texture GLCM (Haralick) sur VV_dB/VH_dB comme descripteur
 d'ordre supérieur à l'amplitude seule, testée directement contre la même
-vérité terrain TBE que l'OS1/OS2 (amplitude brute, amplitude corrigée en
+vérité terrain TBE que les étapes 1 et 2 (amplitude brute, amplitude corrigée en
 anomalie).
 
 Motivation : les tests précédents (os2_water_cloud_model.py,

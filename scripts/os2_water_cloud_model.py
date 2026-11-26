@@ -1,8 +1,8 @@
 """
-OS2 (premier test) — Water Cloud Model (Attema & Ulaby, 1978) calibré sur les
-échantillons SAR x sévérité TBE de l'OS1, pour évaluer si un modèle physique à
+Étape 2 (premier test) — Water Cloud Model (Attema & Ulaby, 1978) calibré sur les
+échantillons SAR x sévérité TBE de l'étape 1, pour évaluer si un modèle physique à
 faible nombre de paramètres explique mieux la relation rétrodiffusion/sévérité
-que la simple lecture d'indice (RVI) de l'OS1.
+que la simple lecture d'indice (RVI) de l'étape 1.
 
 Modèle (par polarisation p, en puissance linéaire) :
 
@@ -15,10 +15,10 @@ empiriques à calibrer, sigma0_sol_p la contribution du sol/sous-bois sous un
 houppier totalement atténuant.
 
 N'ayant pas encore de mesure directe de V (LAI, contenu en eau - prévu en
-OS2/OS3 via données de terrain), ce prototype estime un V effectif par classe
+étapes 2 et 3 via données de terrain), ce prototype estime un V effectif par classe
 de sévérité (V0 > V1 > V2 > V3, contrainte de monotonie) conjointement avec
 A_p, B_p, sigma0_sol_p, par moindres carrés non linéaires sur les moyennes
-zonales VV/VH de l'OS1. C'est un test de plausibilité, pas une inversion
+zonales VV/VH de l'étape 1. C'est un test de plausibilité, pas une inversion
 pixel à pixel.
 
 Utilisation :

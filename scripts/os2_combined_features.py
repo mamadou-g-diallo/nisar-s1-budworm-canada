@@ -1,5 +1,5 @@
 """
-OS2 (suite) — comparaison équitable amplitude vs texture vs combiné, sur
+Étape 2 (suite) — comparaison équitable amplitude vs texture vs combiné, sur
 EXACTEMENT le même ensemble de polygones (contrairement à
 os2_texture_glcm.py, qui régénérait indépendamment son propre tirage de
 témoins "non affecté" - comparaison biaisée par la différence de taille

@@ -1,5 +1,5 @@
 """
-OS2 (suite) — la géodatabase RTC de Planetary Computer ne fournit aucune bande
+Étape 2 (suite) — la géodatabase RTC de Planetary Computer ne fournit aucune bande
 d'angle d'incidence local (vérifié directement sur les assets STAC : vv, vh,
 tilejson, preview - rien d'autre). Comme toutes les années sont acquises sur
 la même orbite relative (cf. os1_download_data.py), l'angle d'incidence et les

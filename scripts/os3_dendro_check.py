@@ -1,10 +1,10 @@
 """
-OS3 (préliminaire) — les chronologies dendrochronologiques ouvertes disponibles
+Étape 3 (préliminaire) — les chronologies dendrochronologiques ouvertes disponibles
 pour la zone d'étude (ITRDB/NOAA, Krause & Morin) s'arrêtent toutes en
 1993-1995, soit ~20 ans avant le début de Sentinel-1 (2014). Aucune
-comparaison directe avec la série SAR de l'OS1/OS2 n'est donc possible avec
+comparaison directe avec la série SAR des étapes 1 et 2 n'est donc possible avec
 des données ouvertes seules - un constat important en soi pour la suite de
-la thèse (nécessité d'un carottage de terrain neuf, co-localisé avec les
+ce travail (nécessité d'un carottage de terrain neuf, co-localisé avec les
 observations SAR actuelles, plutôt qu'une réutilisation de chronologies
 historiques).
 

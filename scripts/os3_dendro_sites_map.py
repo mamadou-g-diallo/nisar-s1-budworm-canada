@@ -1,5 +1,5 @@
 """
-OS3 — carte de localisation des 3 sites de chronologie dendrochronologique
+Étape 3 — carte de localisation des 3 sites de chronologie dendrochronologique
 (ITRDB) par rapport à l'AOI Sentinel-1, étiquetée avec le code de site, le
 nom et l'espèce (champs utilisés dans os3_dendro_check.py).
 

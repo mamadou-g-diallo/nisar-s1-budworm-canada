@@ -1,12 +1,12 @@
 """Figures of the French poster, read from the data and result tables of this repository.
 
 f0_carte.png      2025 defoliation severity (MRNF) over the Sentinel-1 VV composite, AOI outline
-f1_rvi.png        RVI per polygon by severity class (OS1 samples)
-f2_f1.png         F1 per class: hand-crafted amplitude descriptors vs SSL4EO-S12 embeddings (OS4)
+f1_rvi.png        RVI per polygon by severity class (step 1 samples)
+f2_f1.png         F1 per class: hand-crafted amplitude descriptors vs SSL4EO-S12 embeddings (step 4)
 
 Run from the repository root: TBE_AOI=saguenay_lsj python poster/poster_figures.py
 The F1 values are those printed by scripts/os1_exploratory_analysis.py (5-fold CV, n = 1 329) and
-scripts/os4_foundation_model_probe.py (5-fold CV, n = 1 413); OS1 was re-run with nisar_s1 0.5.0 on 2026-11-26.
+scripts/os4_foundation_model_probe.py (5-fold CV, n = 1 413); step 1 was re-run with nisar_s1 0.5.0 on 2026-11-26.
 """
 import sys
 from pathlib import Path
