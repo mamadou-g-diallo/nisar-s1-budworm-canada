@@ -8,6 +8,9 @@ A reproducible, open-data-only pipeline that links Sentinel-1 SAR time series to
 ![License](https://img.shields.io/badge/code%20license-MIT-green)
 ![Data](https://img.shields.io/badge/data%20license-CC--BY%204.0-lightgrey)
 
+**Poster (French):** [poster/poster_tbe_fr.pdf](poster/poster_tbe_fr.pdf) — figures built by
+[`poster/poster_figures.py`](poster/poster_figures.py) from the data and result tables.
+
 ---
 
 ## Table of contents
