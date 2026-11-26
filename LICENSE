@@ -19,11 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
----
-
-This license applies to the source code in this repository. The third-party
-datasets it consumes remain under their own licenses (see "Data & Licensing"
-in the README): Copernicus Sentinel-1 data (free and open, EU Copernicus data
-policy) and MRNF/MFFP spruce budworm defoliation data (Données Québec,
-CC-BY 4.0).
