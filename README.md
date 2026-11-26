@@ -194,11 +194,9 @@ which descriptors — and which moments (mean vs. intra-polygon variability) —
 The Sentinel-1 steps use [`nisar_s1`](https://github.com/mamadou-g-diallo/nisar-s1) (pinned release v0.5.0
 in `requirements.txt`): scene search on Planetary Computer, choice of the common relative orbit, per-pixel
 median composite (`nisar_s1.cband`), dB conversion and RVI (`nisar_s1.raster`, `nisar_s1.polarimetry`).
-The same package runs two other studies, so the three are reproducible with the same code:
-[nisar-s1-forest-france](https://github.com/mamadou-g-diallo/nisar-s1-forest-france) (clear-cuts
-and a forested landslide in France) and
-[nisar-s1-mangroves-senegal](https://github.com/mamadou-g-diallo/nisar-s1-mangroves-senegal) (mangroves in
-Senegal). Re-running the download with the package gives yearly composites identical bit for bit to those
+The same package runs two sister studies, so the three are reproducible with the same code:
+[nisar-s1-forest-france](https://github.com/mamadou-g-diallo/nisar-s1-forest-france) (clear-cuts and a forested landslide in France) and
+[nisar-s1-mangroves-senegal](https://github.com/mamadou-g-diallo/nisar-s1-mangroves-senegal) (mangroves of the Saloum delta, Senegal). Re-running the download with the package gives yearly composites identical bit for bit to those
 behind the results below. Sentinel-1 InSAR coherence, the next descriptor to test, is available in
 `nisar_s1.snap` (ESA SNAP graphs, including a two-step version for machines with little memory).
 
