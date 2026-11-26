@@ -1,0 +1,10 @@
+Sentinel-1 SAR and spruce budworm defoliation severity (Quebec boreal forest)
+Copyright 2026 Mamadou Galy Diallo
+
+Licensed under the Apache License, Version 2.0 (see LICENSE). The shared processing code is the
+nisar_s1 package (https://github.com/mamadou-g-diallo/nisar-s1), also Apache-2.0.
+
+Copernicus Sentinel-1 data are provided by ESA and the European Union (free and open under the EU
+Copernicus data policy), accessed through Microsoft Planetary Computer.
+Spruce budworm defoliation data: Ministère des Ressources naturelles et des Forêts du Québec, via
+Données Québec, licensed CC-BY 4.0.

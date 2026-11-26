@@ -5,7 +5,7 @@
 A reproducible, open-data-only pipeline that links Sentinel-1 SAR time series to the Quebec government's own aerial-survey defoliation maps, built as a proof-of-concept for a PhD research objective on SAR-based forest health monitoring.
 
 ![Python](https://img.shields.io/badge/python-3.11-blue)
-![License](https://img.shields.io/badge/code%20license-MIT-green)
+![License](https://img.shields.io/badge/code%20license-Apache--2.0-blue)
 ![Data](https://img.shields.io/badge/data%20license-CC--BY%204.0-lightgrey)
 
 **Poster (French):** [poster/poster_tbe_fr.pdf](poster/poster_tbe_fr.pdf) — figures built by
@@ -538,7 +538,7 @@ worked illustration for the thesis proposal, not a finding about the Saguenay–
 
 ## License & data attribution
 
-Code in this repository is released under the [MIT License](LICENSE).
+Code in this repository is released under the [Apache License 2.0](LICENSE) (see also [NOTICE](NOTICE)).
 
 - Sentinel-1 data: © Copernicus Sentinel data, processed by Microsoft Planetary Computer — free and
   open under the EU Copernicus data policy.
