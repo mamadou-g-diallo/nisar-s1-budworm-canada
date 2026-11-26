@@ -195,9 +195,9 @@ The Sentinel-1 steps use [`nisar_s1`](https://github.com/mamadou-g-diallo/nisar-
 in `requirements.txt`): scene search on Planetary Computer, choice of the common relative orbit, per-pixel
 median composite (`nisar_s1.cband`), dB conversion and RVI (`nisar_s1.raster`, `nisar_s1.polarimetry`).
 The same package runs two other studies, so the three are reproducible with the same code:
-[nisar-s1-forest-feasibility](https://github.com/mamadou-g-diallo/nisar-s1-forest-feasibility) (clear-cuts
+[nisar-s1-forest-france](https://github.com/mamadou-g-diallo/nisar-s1-forest-france) (clear-cuts
 and a forested landslide in France) and
-[nisar-s1-saloum-mangroves](https://github.com/mamadou-g-diallo/nisar-s1-saloum-mangroves) (mangroves in
+[nisar-s1-mangroves-senegal](https://github.com/mamadou-g-diallo/nisar-s1-mangroves-senegal) (mangroves in
 Senegal). Re-running the download with the package gives yearly composites identical bit for bit to those
 behind the results below. Sentinel-1 InSAR coherence, the next descriptor to test, is available in
 `nisar_s1.snap` (ESA SNAP graphs, including a two-step version for machines with little memory).
@@ -235,8 +235,8 @@ behind the results below. Sentinel-1 InSAR coherence, the next descriptor to tes
 ## Getting started
 
 ```bash
-git clone https://github.com/mamadou-g-diallo/sar-tbe-defoliation.git
-cd sar-tbe-defoliation
+git clone https://github.com/mamadou-g-diallo/nisar-s1-budworm-canada.git
+cd nisar-s1-budworm-canada
 pip install -r requirements.txt          # includes nisar_s1 v0.5.0
 
 export TBE_AOI=saguenay_lsj
