@@ -4,25 +4,28 @@ data/tbe_raw/
 data/*/raw/
 data/*/processed/
 
-# Garder : data/shp/ (définition d'AOI, léger) et data/*/results/ (CSV + figures,
-# démonstration des résultats, quelques centaines de Ko)
+# Garder : data/shp/ (définition d'AOI, léger), data/dendro/ et results/ (CSV + figures,
+# quelques centaines de Ko)
 # cache régénérable (embeddings 2048-d x n échantillons, ~25 Mo)
-data/*/results/*embeddings*.csv
+results/*/*embeddings*.csv
 
 __pycache__/
 *.pyc
 .ipynb_checkpoints/
 
-# Notebooks tutoriel PyGMTSAR (matériel d'apprentissage personnel, pas notre
-# code : bio/promo de l'auteur non retirée, chemins d'une autre machine,
-# cellules en erreur — pas la chaîne SNAP documentée dans ce dossier) — jamais
-# versionnés, même si un `git add .` les recroise un jour.
-insar_coherence_snap/*.ipynb
+# Ancienne chaîne SNAP locale (remplacée par nisar_s1.snap) et notebooks personnels
+insar_coherence_snap/
 
 # Docs de travail (PDF/DOCX générés localement pour la candidature, hors dépôt)
 *.docx
 *.pdf
 *.tex
+!poster/*.pdf
+!poster/*.tex
+poster/*.aux
+poster/*.log
+poster/*.out
+guide_modeles_sar_tbe.html
 .~lock.*#
 
 .DS_Store

@@ -16,7 +16,7 @@ Ce script compare, avant/après cette correction :
 
 Utilisation :
     conda activate hw_senegal
-    TBE_AOI=<nom_aoi> python3 os2_anomaly_correction.py
+    TBE_AOI=<nom_aoi> python3 scripts/os2_anomaly_correction.py
     (nécessite d'avoir exécuté os1_feature_extraction.py, os1_join_defoliation.py
     ET os2_join_defoliation_anomaly.py au préalable)
 """

@@ -17,7 +17,7 @@ pré-entraînés sur des tuiles régulières, pas des polygones).
 
 Utilisation :
     conda activate hw_senegal
-    TBE_AOI=<nom_aoi> python3 os4_foundation_model_probe.py
+    TBE_AOI=<nom_aoi> python3 scripts/os4_foundation_model_probe.py
 """
 
 import geopandas as gpd

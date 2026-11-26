@@ -23,7 +23,7 @@ pixel à pixel.
 
 Utilisation :
     conda activate hw_senegal
-    TBE_AOI=<nom_aoi> python3 os2_water_cloud_model.py
+    TBE_AOI=<nom_aoi> python3 scripts/os2_water_cloud_model.py
 """
 
 import matplotlib

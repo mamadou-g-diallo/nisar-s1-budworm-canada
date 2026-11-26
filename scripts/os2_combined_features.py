@@ -14,7 +14,7 @@ sous-ensemble où les deux jeux de descripteurs sont disponibles.
 
 Utilisation :
     conda activate hw_senegal
-    TBE_AOI=<nom_aoi> python3 os2_combined_features.py
+    TBE_AOI=<nom_aoi> python3 scripts/os2_combined_features.py
 """
 
 import geopandas as gpd

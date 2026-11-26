@@ -7,7 +7,7 @@ séparation par sévérité observée dans os2_water_cloud_model.py.
 
 Utilisation :
     conda activate hw_senegal
-    TBE_AOI=<nom_aoi> python3 os2_join_defoliation_anomaly.py
+    TBE_AOI=<nom_aoi> python3 scripts/os2_join_defoliation_anomaly.py
 """
 
 import geopandas as gpd

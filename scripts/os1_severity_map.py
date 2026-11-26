@@ -5,7 +5,7 @@ que de s'appuyer uniquement sur des statistiques agrégées (boxplots, SHAP).
 
 Utilisation :
     conda activate hw_senegal
-    TBE_AOI=<nom_aoi> python3 os1_severity_map.py
+    TBE_AOI=<nom_aoi> python3 scripts/os1_severity_map.py
 """
 
 import matplotlib

@@ -12,7 +12,7 @@ terrain, sans autre traitement.
 
 Utilisation :
     conda activate hw_senegal
-    TBE_AOI=<nom_aoi> python3 os1_join_defoliation.py
+    TBE_AOI=<nom_aoi> python3 scripts/os1_join_defoliation.py
 """
 
 import geopandas as gpd

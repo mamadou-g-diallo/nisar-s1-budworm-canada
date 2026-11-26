@@ -40,7 +40,7 @@ Protocole :
 
 Utilisation :
     conda activate hw_senegal
-    python3 os2_pinn_illustration.py
+    python3 scripts/os2_pinn_illustration.py
 """
 
 import matplotlib
@@ -50,7 +50,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 
-from config import RESULT_DIR
+from config import RESULTS_ROOT
 
 torch.manual_seed(0)
 np.random.seed(0)
@@ -213,7 +213,7 @@ def main():
     axes[0].set_ylabel("Psi prédit (MPa)")
     fig.suptitle("Illustration pédagogique (données synthétiques) — PAS un résultat sur l'AOI réel", fontsize=10)
     fig.tight_layout()
-    out_fig = RESULT_DIR.parent.parent / "os2_pinn_illustration.png"
+    out_fig = RESULTS_ROOT / "os2_pinn_illustration.png"
     fig.savefig(out_fig, dpi=150)
     print(f"\nFigure -> {out_fig}")
 

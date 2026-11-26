@@ -5,7 +5,7 @@ nom et l'espèce (champs utilisés dans os3_dendro_check.py).
 
 Utilisation :
     conda activate hw_senegal
-    TBE_AOI=<nom_aoi> python3 os3_dendro_sites_map.py
+    TBE_AOI=<nom_aoi> python3 scripts/os3_dendro_sites_map.py
 """
 
 import matplotlib
@@ -65,7 +65,7 @@ def main():
     )
     ax.set_aspect(1.5, adjustable="box")
     fig.tight_layout()
-    out = RESULT_DIR.parent / "dendro_sites_map.png"
+    out = RESULT_DIR / "dendro_sites_map.png"
     fig.savefig(out, dpi=150)
     print(f"Carte -> {out}")
 

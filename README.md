@@ -18,6 +18,7 @@ A reproducible, open-data-only pipeline that links Sentinel-1 SAR time series to
 - [Architecture](#architecture)
 - [Data sources](#data-sources)
 - [Methodology](#methodology)
+- [Shared processing package](#shared-processing-package)
 - [Repository structure](#repository-structure)
 - [Getting started](#getting-started)
 - [Results & discussion](#results--discussion)
@@ -49,11 +50,11 @@ processing software beyond a standard Python geospatial stack.
 
 ## Study area
 
-Before any statistic, what does the actual damage look like on the ground? [`os1_severity_map.py`](os1_severity_map.py)
+Before any statistic, what does the actual damage look like on the ground? [`os1_severity_map.py`](scripts/os1_severity_map.py)
 overlays the 2025 TBE severity polygons on the Sentinel-1 VV composite for the same year:
 
 <p align="center">
-  <img src="data/saguenay_lsj/results/severity_map_2025.png" width="620">
+  <img src="results/saguenay_lsj/severity_map_2025.png" width="620">
 </p>
 
 The diagonal grayscale band is the actual Sentinel-1 swath on the retained orbit — visual confirmation
@@ -62,11 +63,11 @@ SAR observation at all for this AOI/orbit. The TBE polygons themselves extend be
 boundary (bbox-intersecting polygons are kept in full, not clipped), giving a sense of how the
 epidemic's real footprint compares to the small window this repo analyzes.
 
-[`os1_sar_variables_map.py`](os1_sar_variables_map.py) shows the three raw descriptors side by side
+[`os1_sar_variables_map.py`](scripts/os1_sar_variables_map.py) shows the three raw descriptors side by side
 instead of just their zonal statistics:
 
 <p align="center">
-  <img src="data/saguenay_lsj/results/sar_variables_map_2025.png" width="680">
+  <img src="results/saguenay_lsj/sar_variables_map_2025.png" width="680">
 </p>
 
 ## Key result
@@ -77,8 +78,8 @@ stands**, but **does not cleanly separate the three severity classes** (light / 
 its own:
 
 <p align="center">
-  <img src="data/saguenay_lsj/results/rvi_by_severity.png" width="420">
-  <img src="data/saguenay_lsj/results/shap_summary.png" width="440">
+  <img src="results/saguenay_lsj/rvi_by_severity.png" width="420">
+  <img src="results/saguenay_lsj/shap_summary.png" width="440">
 </p>
 
 A Random Forest classifier trained on 6 simple radar descriptors reaches 38% cross-validated accuracy
@@ -100,8 +101,8 @@ flowchart TD
     end
 
     subgraph Pipeline["Pipeline (this repo)"]
-        A["os1_download_data.py<br/>same relative orbit across years<br/>median summer composite"]
-        B["os1_feature_extraction.py<br/>VV/VH to dB, RVI"]
+        A["os1_download_data.py<br/>same relative orbit across years<br/>median summer composite (nisar_s1)"]
+        B["os1_feature_extraction.py<br/>VV/VH to dB, RVI (nisar_s1)"]
         C["os1_join_defoliation.py<br/>zonal stats on TBE polygons<br/>plus negative sampling"]
         D["os1_exploratory_analysis.py<br/>Random Forest, 5-fold CV, SHAP"]
     end
@@ -125,7 +126,7 @@ flowchart TD
     class R1,R2,R3 outputStyle
 ```
 
-Every stage is a standalone script driven by `config.py`, which centralizes the study area, the year
+Every stage is a standalone script in `scripts/` driven by `scripts/config.py`, which centralizes the study area, the year
 list, and the seasonal window — swapping the AOI is a matter of dropping a new shapefile in `data/shp/`
 and setting one environment variable (`TBE_AOI`).
 
@@ -172,34 +173,46 @@ polygon (`rasterstats`, reprojected to the raster's UTM CRS). A Random Forest cl
 (`class_weight="balanced"`, 5-fold stratified cross-validation) and a SHAP `TreeExplainer` quantify
 which descriptors — and which moments (mean vs. intra-polygon variability) — carry the most signal.
 
+## Shared processing package
+
+The Sentinel-1 steps use [`nisar_s1`](https://github.com/mamadou-g-diallo/nisar-s1) (pinned release v0.5.0
+in `requirements.txt`): scene search on Planetary Computer, choice of the common relative orbit, per-pixel
+median composite (`nisar_s1.cband`), dB conversion and RVI (`nisar_s1.raster`, `nisar_s1.polarimetry`).
+The same package runs two other studies, so the three are reproducible with the same code:
+[nisar-s1-forest-feasibility](https://github.com/mamadou-g-diallo/nisar-s1-forest-feasibility) (clear-cuts
+and a forested landslide in France) and
+[nisar-s1-saloum-mangroves](https://github.com/mamadou-g-diallo/nisar-s1-saloum-mangroves) (mangroves in
+Senegal). Re-running the download with the package gives yearly composites identical bit for bit to those
+behind the results below. Sentinel-1 InSAR coherence, the next descriptor to test, is available in
+`nisar_s1.snap` (ESA SNAP graphs, including a two-step version for machines with little memory).
+
 ## Repository structure
 
 ```
 .
-├── config.py                # AOI, years, season window, STAC endpoint, field names
-├── os1_download_data.py         # Sentinel-1 RTC acquisition (same-orbit, median composite)
-├── os1_feature_extraction.py    # VV_dB, VH_dB, RVI rasters
-├── os1_join_defoliation.py      # zonal stats × TBE polygons + negative sampling → CSV
-├── os1_exploratory_analysis.py  # Random Forest + SHAP, figures
-├── os1_severity_map.py            # OS1: TBE severity polygons over the Sentinel-1 composite
-├── os1_sar_variables_map.py       # OS1: VV/VH/RVI side-by-side maps
-├── os3_dendro_sites_map.py        # OS3: ITRDB site locations vs. the AOI
-├── os2_water_cloud_model.py       # OS2: single-angle Water Cloud Model calibration
-├── os2_anomaly_correction.py      # OS2: per-pixel temporal-anomaly correction test
-├── os2_texture_glcm.py            # OS2: GLCM texture descriptors
-├── os2_combined_features.py       # OS2: fair matched amplitude-vs-texture comparison
-├── os3_dendro_check.py            # OS3: nearest open ITRDB chronologies vs. documented outbreak
-├── os4_foundation_model_probe.py  # OS4 preview: SSL4EO-S12 linear probing
-├── os4_finetune.py                # OS4 preview: partial fine-tuning (layer4 + head)
-├── requirements.txt
+├── scripts/
+│   ├── config.py                     # AOI, years, season window, field names, paths
+│   ├── os1_download_data.py          # Sentinel-1 RTC yearly composites, same orbit (nisar_s1)
+│   ├── os1_feature_extraction.py     # VV_dB, VH_dB, RVI rasters and per-pixel anomalies
+│   ├── os1_join_defoliation.py       # zonal stats × TBE polygons + negative sampling → CSV
+│   ├── os1_exploratory_analysis.py   # Random Forest + SHAP, figures
+│   ├── os1_severity_map.py           # TBE severity polygons over the Sentinel-1 composite
+│   ├── os1_sar_variables_map.py      # VV/VH/RVI side-by-side maps
+│   ├── os2_water_cloud_model.py      # single-angle Water Cloud Model calibration
+│   ├── os2_join_defoliation_anomaly.py, os2_anomaly_correction.py   # per-pixel anomaly test
+│   ├── os2_texture_glcm.py, os2_combined_features.py               # GLCM texture, matched comparison
+│   ├── os2_pinn_illustration.py      # physics-informed network, synthetic data only
+│   ├── os3_dendro_check.py, os3_dendro_sites_map.py                 # open ITRDB chronologies
+│   └── os4_foundation_model_probe.py, os4_finetune.py               # SSL4EO-S12 probing, fine-tuning
 ├── data/
-│   ├── shp/                 # AOI definition (saguenay_lsj.shp) — versioned, ~20 KB
-│   ├── tbe_raw/              # MRNF archive — gitignored, download separately (see below)
-│   └── saguenay_lsj/
-│       ├── raw/              # Sentinel-1 GeoTIFFs — gitignored, regenerate via os1_download_data.py
-│       ├── processed/        # VV_dB/VH_dB/RVI rasters — gitignored, regenerate via os1_feature_extraction.py
-│       └── results/          # sar_defoliation_samples.csv + figures — versioned
-└── README.md
+│   ├── shp/                # AOI definition (saguenay_lsj.shp), versioned
+│   ├── dendro/             # ITRDB chronologies (.crn), versioned
+│   ├── tbe_raw/            # MRNF archive, not versioned (download separately, see below)
+│   └── saguenay_lsj/       # raw/ and processed/ rasters, not versioned (regenerated by the scripts)
+├── results/
+│   └── saguenay_lsj/       # CSV tables and figures, versioned
+├── poster/                 # poster (French)
+└── requirements.txt
 ```
 
 ## Getting started
@@ -207,17 +220,17 @@ which descriptors — and which moments (mean vs. intra-polygon variability) —
 ```bash
 git clone https://github.com/mamadou-g-diallo/sar-tbe-defoliation.git
 cd sar-tbe-defoliation
-pip install -r requirements.txt
+pip install -r requirements.txt          # includes nisar_s1 v0.5.0
 
 export TBE_AOI=saguenay_lsj
 
-python3 os1_download_data.py        # Sentinel-1 RTC → data/<aoi>/raw/
-python3 os1_feature_extraction.py   # VV_dB, VH_dB, RVI → data/<aoi>/processed/
+python3 scripts/os1_download_data.py        # Sentinel-1 RTC → data/<aoi>/raw/
+python3 scripts/os1_feature_extraction.py   # VV_dB, VH_dB, RVI → data/<aoi>/processed/
 
 # Download the MRNF archive manually (too large to version — see Data sources above),
 # extract it under data/tbe_raw/, then:
-python3 os1_join_defoliation.py     # → data/<aoi>/results/sar_defoliation_samples.csv
-python3 os1_exploratory_analysis.py # → figures in data/<aoi>/results/
+python3 scripts/os1_join_defoliation.py     # → results/<aoi>/sar_defoliation_samples.csv
+python3 scripts/os1_exploratory_analysis.py # → figures in results/<aoi>/
 ```
 
 To run this on a different region: drop a new AOI polygon shapefile in `data/shp/`, set
@@ -248,7 +261,7 @@ next phase of this project.
 
 ## OS2 — first physical-model test (negative result, and why it matters)
 
-As a first, deliberately quick test of OS2, [`os2_water_cloud_model.py`](os2_water_cloud_model.py)
+As a first, deliberately quick test of OS2, [`os2_water_cloud_model.py`](scripts/os2_water_cloud_model.py)
 fits a single-angle Water Cloud Model (Attema & Ulaby, 1978) to the same OS1 samples, estimating one
 effective vegetation descriptor `V` per severity class jointly with shared coefficients `A`, `B`,
 `σ0_soil` per polarization, by nonlinear least squares.
@@ -267,10 +280,10 @@ incidence angle, general moisture, calibration) that dominates each raw band on 
 **Follow-up test.** Planetary Computer's `sentinel-1-rtc` collection ships no incidence-angle asset
 (confirmed directly on the STAC item — only `vv`, `vh`, `tilejson`, `preview`). But since every year is
 acquired on the same fixed relative orbit, incidence angle and static terrain effects are **constant
-over time for a given pixel** — so [`os1_feature_extraction.py`](os1_feature_extraction.py) computes a
+over time for a given pixel** — so [`os1_feature_extraction.py`](scripts/os1_feature_extraction.py) computes a
 **per-pixel temporal anomaly** (this year's value minus that pixel's own 5-year mean) as a
 geometry-correction proxy that doesn't require the missing band, and
-[`os2_anomaly_correction.py`](os2_anomaly_correction.py) re-runs the diagnostic on it:
+[`os2_anomaly_correction.py`](scripts/os2_anomaly_correction.py) re-runs the diagnostic on it:
 
 | | Raw | Anomaly-corrected |
 |---|---|---|
@@ -295,7 +308,7 @@ already planned — coupling a Water Cloud Model to field-measured canopy water 
 plus higher-order descriptors (polarimetric decomposition, InSAR coherence, texture) — is reinforced by
 this negative result, not just still an option.
 
-**Second follow-up test: GLCM texture.** [`os2_texture_glcm.py`](os2_texture_glcm.py) computes
+**Second follow-up test: GLCM texture.** [`os2_texture_glcm.py`](scripts/os2_texture_glcm.py) computes
 gray-level co-occurrence texture (contrast, homogeneity, energy, entropy; distance 1, 4 orientations
 averaged) directly on each polygon's pixels — a structural descriptor that doesn't require an
 amplitude shift to detect a patchier, more heterogeneous defoliated canopy:
@@ -311,7 +324,7 @@ its Random Forest accuracy is lower than amplitude's, mostly because GLCM needs 
 (≥16 valid 20 m pixels ≈ 0.64 ha) to be numerically meaningful, which drops the usable sample from 1,329
 to 431 — a smaller, size-biased subset, not a fair head-to-head comparison yet.
 
-**Third follow-up test: a fair, matched comparison.** [`os2_combined_features.py`](os2_combined_features.py)
+**Third follow-up test: a fair, matched comparison.** [`os2_combined_features.py`](scripts/os2_combined_features.py)
 computes amplitude and texture on the *same* 431 polygons in a single pass (rather than two independent
 samplings), then trains Random Forest on each feature set alone and combined:
 
@@ -332,7 +345,7 @@ that two numbers you're comparing were computed on the same data before trusting
 
 Every hand-crafted descriptor tried above (amplitude, incidence-angle-corrected amplitude, GLCM
 texture, and their combination) tops out around 38–41% accuracy. Before concluding that ~40% is a hard
-ceiling for open Sentinel-1 data on this problem, [`os4_foundation_model_probe.py`](os4_foundation_model_probe.py)
+ceiling for open Sentinel-1 data on this problem, [`os4_foundation_model_probe.py`](scripts/os4_foundation_model_probe.py)
 tests one more thing, pulled forward from the OS4 roadmap item: **linear probing** on
 [SSL4EO-S12](https://arxiv.org/abs/2211.07044) — a ResNet50 pre-trained by self-supervised contrastive
 learning (MoCo) on global Sentinel-1 VV/VH, via [TorchGeo](https://torchgeo.readthedocs.io/). The
@@ -347,7 +360,7 @@ the same 64×64 px (1.28 km) patch centered on each polygon centroid.
 | F1 — grave | 0.101 | **0.39** |
 
 <p align="center">
-  <img src="data/saguenay_lsj/results/os4_ssl4eo_vs_amplitude.png" width="560">
+  <img src="results/saguenay_lsj/os4_ssl4eo_vs_amplitude.png" width="560">
 </p>
 
 This is not a majority-class trick: the gain concentrates exactly where amplitude was weakest —
@@ -373,12 +386,12 @@ representation learning on raw SAR appears to already recover signal that hand-c
 were leaving on the table.
 
 **Does fine-tuning do even better? Tested — no, not at this sample size.**
-[`os4_finetune.py`](os4_finetune.py) unfreezes `layer4` + a new classification head (the rest of the
+[`os4_finetune.py`](scripts/os4_finetune.py) unfreezes `layer4` + a new classification head (the rest of the
 backbone stays frozen) and trains on a 70/15/15 stratified split with class-weighted cross-entropy and
 flip/rotation augmentation (valid for SAR — no canonical orientation):
 
 <p align="center">
-  <img src="data/saguenay_lsj/results/os4_finetune_curves.png" width="640">
+  <img src="results/saguenay_lsj/os4_finetune_curves.png" width="640">
 </p>
 
 Training loss falls steadily; validation loss drops for ~4 epochs, then climbs while accuracy gets
@@ -394,14 +407,14 @@ the training set.
 
 ## OS3 — dendrochronology: what open data can and can't do
 
-[`os3_dendro_check.py`](os3_dendro_check.py) pulls the three nearest published tree-ring chronologies
+[`os3_dendro_check.py`](scripts/os3_dendro_check.py) pulls the three nearest published tree-ring chronologies
 (NOAA/[ITRDB](https://www.ncei.noaa.gov/products/paleoclimatology/tree-ring), Krause & Morin) to the
 AOI — one (Lac Onatchiway, black spruce) falls *inside* the Sentinel-1 bounding box; the other two
 (Mont Valin, Lac Liberal — balsam fir, TBE's primary host) are within the same region —
-[`os3_dendro_sites_map.py`](os3_dendro_sites_map.py) plots exactly where:
+[`os3_dendro_sites_map.py`](scripts/os3_dendro_sites_map.py) plots exactly where:
 
 <p align="center">
-  <img src="data/saguenay_lsj/dendro_sites_map.png" width="560">
+  <img src="results/saguenay_lsj/dendro_sites_map.png" width="560">
 </p>
 
 **The hard limit, stated plainly**: all three end in **1993–1995**, roughly two decades before Sentinel-1
@@ -414,7 +427,7 @@ signal, which is a meaningful check on data quality before investing in new fiel
 same sites/species.
 
 <p align="center">
-  <img src="data/saguenay_lsj/dendro_vs_outbreak.png" width="640">
+  <img src="results/saguenay_lsj/dendro_vs_outbreak.png" width="640">
 </p>
 
 All three independent chronologies hit their growth minimum in the **same year, 1978**, within the
@@ -448,9 +461,8 @@ This is OS1 (Objectif Spécifique 1) of a four-part doctoral research plan:
   clears ~40% accuracy on open data alone — the ceiling isn't a missing descriptor, it's the missing
   physical/field layer. Next: couple a Water Cloud Model to field-measured tree water potential/sap
   flow via a dielectric mixing model, and add InSAR coherence once SLC pairs are worth acquiring — the
-  SNAP GPT chain to compute it is ready ([`insar_coherence_snap/`](insar_coherence_snap/), adapted from
-  the pipeline used operationally for post-earthquake coherence mapping); acquiring authenticated SLC
-  data for this AOI is the remaining blocker, not the processing method.
+  shared package computes it with ESA SNAP (`nisar_s1.snap`); acquiring authenticated SLC data for this
+  AOI is the remaining blocker, not the processing method.
 - **OS3** — a first check (this repo) against the 3 nearest open ITRDB chronologies confirms they
   capture a real, host-specific 1978 growth crash synchronized across independent sites, but all three
   end in 1993–1995 — decades before Sentinel-1 exists. Cross-validating the SAR-derived stress index
@@ -473,14 +485,14 @@ already established that the physics itself carries ~zero signal in *this* open 
 real state variables (measured canopy water content, local incidence angle) aren't available. A PINN
 cannot inject physical information that isn't in the data.
 
-[`os2_pinn_illustration.py`](os2_pinn_illustration.py) instead demonstrates *what the approach would
+[`os2_pinn_illustration.py`](scripts/os2_pinn_illustration.py) instead demonstrates *what the approach would
 buy once real field hydraulics exist*, on synthetic data with literature-typical (not calibrated, not
 real) parameters: 500 synthetic samples run through Psi → canopy moisture (logistic pressure-volume
 curve) → the same Water Cloud Model equations → noisy SAR backscatter, of which only **15** carry a
 "known" Psi label — a realistic size for a first field campaign.
 
 <p align="center">
-  <img src="data/os2_pinn_illustration.png" width="640">
+  <img src="results/os2_pinn_illustration.png" width="640">
 </p>
 
 | | RMSE on Psi (MPa), same 15 labels |
@@ -512,5 +524,4 @@ Code in this repository is released under the [MIT License](LICENSE).
 [github.com/mamadou-g-diallo](https://github.com/mamadou-g-diallo)
 
 M1 Calcul Haute Performance et Simulation, Université de Perpignan Via Domitia · M2 Télédétection-SIG,
-CRASTE-LF. Built as a proof-of-concept ahead of a PhD application on SAR-based boreal forest health
-monitoring (Université du Québec à Trois-Rivières / MRNF).
+CRASTE-LF. Built as a proof of concept for SAR-based boreal forest health monitoring.

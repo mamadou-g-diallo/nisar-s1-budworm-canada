@@ -15,7 +15,7 @@ plus élevé sur un jeu d'à peine ~1400 échantillons.
 
 Utilisation :
     conda activate hw_senegal
-    TBE_AOI=<nom_aoi> python3 os4_finetune.py
+    TBE_AOI=<nom_aoi> python3 scripts/os4_finetune.py
 """
 
 import matplotlib

@@ -13,13 +13,17 @@ du RVI (moins de diffusion de volume dans le houppier) et une remontée
 relative de VV_dB (contribution accrue du sol/sous-bois et des branches
 dénudées).
 
+Les dB et le RVI sont calculés avec le paquet nisar_s1 (raster.to_db, polarimetry.rvi_dual).
+
 Utilisation :
-    conda activate hw_senegal
-    TBE_AOI=<nom_aoi> python3 os1_feature_extraction.py
+    TBE_AOI=<nom_aoi> python3 scripts/os1_feature_extraction.py
 """
 
 import numpy as np
 import rasterio
+
+from nisar_s1.polarimetry import rvi_dual
+from nisar_s1.raster import to_db as db
 
 from config import YEARS, RAW_DIR, PROC_DIR, NODATA
 
@@ -30,10 +34,8 @@ def read(path):
 
 
 def to_db(linear, valid):
-    db = np.full(linear.shape, np.nan, dtype=np.float32)
-    ok = valid & (linear > 0)
-    db[ok] = 10 * np.log10(linear[ok])
-    return db
+    """10 log10 of the linear gamma0 (nisar_s1.raster.to_db); no-data and non-positive -> NaN."""
+    return db(np.where(valid, linear, np.nan))
 
 
 def save(path, arr, profile, nodata=NODATA):
@@ -100,10 +102,9 @@ def main():
         vv_db = to_db(vv, valid)
         vh_db = to_db(vh, valid)
 
-        denom = vv + vh
-        rvi = np.full(vv.shape, np.nan, dtype=np.float32)
-        ok = valid & (denom > 0)
-        rvi[ok] = 4 * vh[ok] / denom[ok]
+        # RVI = 4 VH / (VV + VH), nisar_s1.polarimetry.rvi_dual
+        ok = valid & ((vv + vh) > 0)
+        rvi = np.where(ok, rvi_dual(np.where(ok, vv, 1.0), np.where(ok, vh, 1.0)), np.nan).astype(np.float32)
 
         save(PROC_DIR / f"vv_db_{year}.tif", vv_db, profile)
         save(PROC_DIR / f"vh_db_{year}.tif", vh_db, profile)

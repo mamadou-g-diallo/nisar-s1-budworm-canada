@@ -5,7 +5,7 @@ Zone d'étude sélectionnée par la variable d'environnement TBE_AOI (nom d'un
 fichier .shp dans data/shp/, sans l'extension), sur le même principe que les
 projets sentinel2_kolda / dakar_flood_pikine :
 
-    TBE_AOI=matane python3 os1_download_data.py
+    TBE_AOI=matane python3 scripts/os1_download_data.py
 
 Chaque AOI a son propre sous-dossier de données (data/<aoi>/...).
 """
@@ -20,10 +20,12 @@ from pyproj import Transformer
 from rasterio.features import geometry_mask
 from shapely.ops import transform as shp_transform
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[1]   # scripts/ -> repository root
 DATA_DIR = ROOT / "data"
 SHP_DIR = DATA_DIR / "shp"
 TBE_RAW_DIR = DATA_DIR / "tbe_raw"  # archive MRNF brute (shapefile 2014-aujourd'hui)
+DENDRO_DIR = DATA_DIR / "dendro"    # chronologies ITRDB (.crn)
+RESULTS_ROOT = ROOT / "results"     # tables et figures versionnées
 
 # --- Zone d'étude active ----------------------------------------------------------
 _AOI_RAW = os.environ.get("TBE_AOI", "saguenay_lsj")
@@ -68,7 +70,7 @@ SEVERITY_LABELS = {0: "non_affecte", 1: "leger", 2: "modere", 3: "grave"}
 AOI_DATA_DIR = DATA_DIR / AOI_NAME
 RAW_DIR = AOI_DATA_DIR / "raw"
 PROC_DIR = AOI_DATA_DIR / "processed"
-RESULT_DIR = AOI_DATA_DIR / "results"
+RESULT_DIR = RESULTS_ROOT / AOI_NAME
 for _d in (RAW_DIR, PROC_DIR, RESULT_DIR):
     _d.mkdir(parents=True, exist_ok=True)
 

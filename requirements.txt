@@ -1,3 +1,5 @@
+# Shared SAR processing package (Sentinel-1 RTC search, composites, dB, RVI), pinned release
+nisar_s1 @ git+https://github.com/mamadou-g-diallo/nisar-s1@v0.5.0
 geopandas
 rasterio
 rasterstats
@@ -8,7 +10,6 @@ scikit-image
 scikit-learn
 shap
 pystac-client
-planetary-computer
 pyproj
 shapely
 matplotlib

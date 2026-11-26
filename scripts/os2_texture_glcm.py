@@ -21,7 +21,7 @@ avec l'unité d'analyse déjà utilisée partout ailleurs dans ce dépôt).
 
 Utilisation :
     conda activate hw_senegal
-    TBE_AOI=<nom_aoi> python3 os2_texture_glcm.py
+    TBE_AOI=<nom_aoi> python3 scripts/os2_texture_glcm.py
 """
 
 import matplotlib

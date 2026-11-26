@@ -23,7 +23,7 @@ Sites (ITRDB, Krause & Morin) :
 
 Utilisation :
     conda activate hw_senegal
-    python3 os3_dendro_check.py
+    python3 scripts/os3_dendro_check.py
 """
 
 import matplotlib
@@ -31,9 +31,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from config import RESULT_DIR
+from config import DENDRO_DIR, RESULT_DIR
 
-DENDRO_DIR = RESULT_DIR.parent.parent / "dendro"  # data/dendro/, hors data/<aoi>/
 
 SITES = {
     "cana143": ("Lac Onatchiway (PCMA, épinette noire) - dans l'AOI", "tab:blue"),
@@ -84,7 +83,7 @@ def main():
     ax.set_title("Chronologies dendro ouvertes (ITRDB) vs. épidémie TBE documentée et période Sentinel-1")
     ax.legend(fontsize=8, loc="lower left")
     fig.tight_layout()
-    out_fig = RESULT_DIR.parent / "dendro_vs_outbreak.png"
+    out_fig = RESULT_DIR / "dendro_vs_outbreak.png"
     fig.savefig(out_fig, dpi=150)
     print(f"\nFigure -> {out_fig}")
 

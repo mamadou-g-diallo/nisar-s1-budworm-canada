@@ -6,7 +6,7 @@ les analyses.
 
 Utilisation :
     conda activate hw_senegal
-    TBE_AOI=<nom_aoi> python3 os1_sar_variables_map.py
+    TBE_AOI=<nom_aoi> python3 scripts/os1_sar_variables_map.py
 """
 
 import matplotlib
